@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 class Router
 {
 
@@ -11,11 +13,11 @@ class Router
     }
 
 
-    public function add(string $path, string $method, string $controller)
+    public function add(string $method, string $path, array $controller): void
     {
         $this->routes[] = [
             "path" => $path,
-            "method" => $method,
+            "method" => strtoupper($method),
             "controller" => $controller
         ];
     }
@@ -28,22 +30,31 @@ class Router
         return $path;
     }
 
-    public function dispatch(string $path)
+    public function dispatch(string $path): void
     {
-        $normalizePath = $this->normalizePath($path);
+        $requestPath = $this->normalizePath($path);
+        $method = strtoupper($_SERVER["REQUEST_METHOD"]);
 
         foreach ($this->routes as $route) {
-            $path = $route["path"];
+            $routePath = $this->normalizePath($route["path"]);
 
-            if ($path == $normalizePath && $_SERVER['REQUEST_METHOD'] == $route["method"]) {
-
-                // we get the controller and do thing here 
-
-
-                // $controller = new Controller()
-
+            if (
+                !preg_match("#^{$routePath}$#", $requestPath) ||
+                $route['method'] !== $method
+            ) {
+                continue;
             }
+
+            [$class, $function] = $route['controller'];
+
+            $controllerInstance = new $class;
+
+            $controllerInstance->{$function}();
+            return;
         }
+
+        http_response_code(404);
+        echo "Page not found";
     }
 
     private function match() {}

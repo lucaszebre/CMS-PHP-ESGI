@@ -7,9 +7,9 @@ services:
       dockerfile: Dockerfile
     container_name: php-apache
     ports:
-      - "8080:80"               # http://localhost
+      - "8080:80"
     volumes:
-      - ./www:/var/www/html:cached
+      - ./:/var/www/html:cached
       - ./php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
     environment:
       - APACHE_LOG_DIR=/var/log/apache2
@@ -28,7 +28,7 @@ services:
     volumes:
       - mariadb-data:/var/lib/mysql
     ports:
-      - "3306:3306"           # optionnel (connexion depuis l’hôte)
+      - "3306:3306"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5
@@ -41,7 +41,7 @@ services:
       PMA_PASSWORD: ${MARIADB_PASSWORD}
       UPLOAD_LIMIT: 128M
     ports:
-      - "8081:80"             # http://localhost:8081
+      - "8081:80"
     depends_on:
       - db
 
