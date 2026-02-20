@@ -13,6 +13,10 @@ services:
       - ./php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
     environment:
       - APACHE_LOG_DIR=/var/log/apache2
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
     depends_on:
       - db
 
