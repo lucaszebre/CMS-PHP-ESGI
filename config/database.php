@@ -4,7 +4,7 @@ class Database {
     private $pdo;
 
     private function __construct() {
-        $this->pdo = new PDO("mysql:host=db;dbname=app_db", "app_user", "secret");
+        $this->pdo = new PDO("mysql:host=db;dbname=" . getenv("MARIADB_DATABASE"), getenv("MARIADB_USER"), getenv("MARIADB_PASSWORD"));
     }
 
     public static function getInstance() {
