@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__DIR__, 2) . '/config/database.php';
+declare(strict_types=1);
 
 class User
 {

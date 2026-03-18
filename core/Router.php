@@ -2,15 +2,11 @@
 
 declare(strict_types=1);
 
-class Router
+class Router extends Controller
 {
+    private array $routes = [];
 
-    private array $routes;
-
-    public function __construct(array $routes)
-    {
-        $this->routes = $routes;
-    }
+    public function __construct() {}
 
 
     public function add(string $method, string $path, array $controller): void
@@ -21,6 +17,7 @@ class Router
             "controller" => $controller
         ];
     }
+
 
     private function normalizePath(string $path): string
     {
@@ -33,10 +30,10 @@ class Router
     public function dispatch(string $path): void
     {
         $requestPath = $this->normalizePath($path);
-        $method = strtoupper($_SERVER["REQUEST_METHOD"]);
+        $method = strtoupper($_SERVER['REQUEST_METHOD']);
 
         foreach ($this->routes as $route) {
-            $routePath = $this->normalizePath($route["path"]);
+            $routePath = $this->normalizePath($route['path']);
 
             if (
                 !preg_match("#^{$routePath}$#", $requestPath) ||
@@ -46,14 +43,24 @@ class Router
             }
 
             [$class, $function] = $route['controller'];
-
-            $controllerInstance = new $class;
-
+            $controllerInstance = new $class();
             $controllerInstance->{$function}();
             return;
         }
 
         http_response_code(404);
-        echo "Page not found";
+        echo 'Page not found';
+    }
+
+
+
+    public function get(string $path, array $controller): void
+    {
+        $this->add('GET', $path, $controller);
+    }
+
+    public function post(string $path, array $controller): void
+    {
+        $this->add('POST', $path, $controller);
     }
 }
