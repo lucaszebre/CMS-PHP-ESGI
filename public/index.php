@@ -11,10 +11,10 @@ require_once dirname(__DIR__) . '/routes/web.php';
 
 
 $router = new Router();
+$request = Request::fromGlobals();
 
 
 registerWebRoutes($router);
 
 
-$uriPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
-$router->dispatch($uriPath);
+$router->dispatch($request);

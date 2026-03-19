@@ -5,62 +5,65 @@ declare(strict_types=1);
 class AuthController extends Controller
 {
     private AuthService $authService;
+    private AuthSession $authSession;
 
     public function __construct()
     {
         $this->authService = new AuthService();
+        $this->authSession = new AuthSession();
     }
 
-    public function showLogin(): void
+    public function showLogin(Request $request): void
     {
         $this->render('login', [
-            'error' => isset($_GET['error']) ? trim((string) $_GET['error']) : '',
-            'success' => isset($_GET['success']) ? trim((string) $_GET['success']) : '',
+            'error' => trim($request->query('error')),
+            'success' => trim($request->query('success')),
         ]);
     }
 
-    public function showRegister(): void
+    public function showRegister(Request $request): void
     {
         $this->render('register', [
-            'error' => isset($_GET['error']) ? trim((string) $_GET['error']) : '',
-            'success' => isset($_GET['success']) ? trim((string) $_GET['success']) : '',
+            'error' => trim($request->query('error')),
+            'success' => trim($request->query('success')),
         ]);
     }
 
-    public function login(): void
+    public function login(Request $request): void
     {
-        if (empty($_POST)) {
+        if (!$request->hasBody()) {
             $this->redirect('/login');
         }
 
-        $password = $_POST['password'] ?? '';
-        $email = strtolower(trim($_POST['email'] ?? ''));
+        $password = $request->input('password');
+        $email = strtolower(trim($request->input('email')));
 
-        $result = $this->authService->login($email, $password);
+        $result = $this->authService->authenticate($email, $password);
 
         if (!$result['success']) {
             $this->redirect('/login?error=' . urlencode($result['error']));
         }
 
+        $this->authSession->login($result['user']);
         $this->redirect('/');
     }
 
-    public function logout(): void
+    public function logout(Request $request): void
     {
-        $this->authService->logout();
+        $this->authSession->logout();
         $this->redirect('/login');
     }
 
-    public function register(): void
+    public function register(Request $request): void
     {
-        if (empty($_POST)) {
+        if (!$request->hasBody()) {
             $this->redirect('/register');
         }
 
-        $password = $_POST['password'] ?? '';
-        $passwordConfirm = $_POST['password_confirm'] ?? '';
-        $username = ucwords(strtolower(trim($_POST['username'] ?? '')));
-        $email = strtolower(trim($_POST['email'] ?? ''));
+        $password = $request->input('password');
+        $passwordConfirm = $request->input('password_confirm');
+        $username = ucwords(strtolower(trim($request->input('username'))));
+        $email = strtolower(trim($request->input('email')));
 
         $result = $this->authService->register($email, $username, $password, $passwordConfirm);
 

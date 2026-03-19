@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-class Router extends Controller
+class Router
 {
     private array $routes = [];
 
@@ -27,10 +27,10 @@ class Router extends Controller
         return $path;
     }
 
-    public function dispatch(string $path): void
+    public function dispatch(Request $request): void
     {
-        $requestPath = $this->normalizePath($path);
-        $method = strtoupper($_SERVER['REQUEST_METHOD']);
+        $requestPath = $this->normalizePath($request->path());
+        $method = $request->method();
 
         foreach ($this->routes as $route) {
             $routePath = $this->normalizePath($route['path']);
@@ -44,7 +44,7 @@ class Router extends Controller
 
             [$class, $function] = $route['controller'];
             $controllerInstance = new $class();
-            $controllerInstance->{$function}();
+            $controllerInstance->{$function}($request);
             return;
         }
 

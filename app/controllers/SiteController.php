@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 class SiteController extends Controller
 {
-    public function home(): void
+    private AuthSession $authSession;
+
+    public function __construct()
+    {
+        $this->authSession = new AuthSession();
+    }
+
+    public function home(Request $request): void
     {
         $this->render('home', [
-            'username' => $_SESSION['username'] ?? null,
+            'username' => $this->authSession->username(),
         ]);
     }
 }

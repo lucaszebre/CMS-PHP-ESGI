@@ -11,7 +11,7 @@ class AuthService
         $this->user = $user ?? new User();
     }
 
-    public function login(string $email, string $password): array
+    public function authenticate(string $email, string $password): array
     {
         $fetchedUser = $this->user->getUserByEmail($email);
 
@@ -22,9 +22,12 @@ class AuthService
             ];
         }
 
-        $_SESSION['username'] = $fetchedUser['username'];
+        unset($fetchedUser['password']);
 
-        return ['success' => true];
+        return [
+            'success' => true,
+            'user' => $fetchedUser,
+        ];
     }
 
     public function register(string $email, string $username, string $password, string $passwordConfirm): array
@@ -49,25 +52,5 @@ class AuthService
         $this->user->addUser($email, $username, $hashedPassword);
 
         return ['success' => true];
-    }
-
-    public function logout(): void
-    {
-
-
-        if (ini_get('session.use_cookies')) {
-            $params = session_get_cookie_params();
-            setcookie(
-                session_name(),
-                '',
-                time() - 42000,
-                $params['path'],
-                $params['domain'],
-                $params['secure'],
-                $params['httponly']
-            );
-        }
-
-        session_destroy();
     }
 }
