@@ -11,7 +11,8 @@ class Request
         private string $path,
         private array $query = [],
         private array $body = [],
-        private array $session = []
+        private array $session = [],
+        private array $params = []
     ) {}
 
     public static function fromGlobals(): self
@@ -59,5 +60,24 @@ class Request
     public function session(string $key, mixed $default = null): mixed
     {
         return $this->session[$key] ?? $default;
+    }
+
+    public function param(string $key): string
+    {
+        $value = $this->params[$key] ?? "";
+
+        return is_string($value) ? $value : "";
+    }
+
+    public function withParams(array $params): self
+    {
+        return new self(
+            $this->method,
+            $this->path,
+            $this->query,
+            $this->body,
+            $this->session,
+            $params
+        );
     }
 }

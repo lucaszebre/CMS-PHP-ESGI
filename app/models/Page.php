@@ -45,6 +45,30 @@ class Page
         ]);
     }
 
+    public function getAllPages(): array
+    {
+        $stmt = $this->db->prepare('SELECT id, title, content, status, author, date, slug FROM page ORDER BY date DESC');
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getPublishedPages(): array
+    {
+        $stmt = $this->db->prepare("SELECT id, title, content, status, author, date, slug FROM page WHERE status = 'published' ORDER BY date DESC");
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getPageById(int $id): ?array
+    {
+        $stmt = $this->db->prepare('SELECT id, title, content, status, author, date, slug FROM page WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
     public function getPage($slug)
     {
         $stmt = $this->db->prepare('SELECT id, title, content, status, author, date, slug FROM page WHERE slug = :slug');
@@ -52,7 +76,7 @@ class Page
 
         $page = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $page ?? null;
+        return $page ?: null;
     }
 
     public function removePage($slug)
