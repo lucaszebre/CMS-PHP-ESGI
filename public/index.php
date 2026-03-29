@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Core\Router;
+use App\Core\Request;
+
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }

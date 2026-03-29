@@ -1,5 +1,9 @@
 <?php
 
+use App\Controllers\AuthController;
+use App\Controllers\SiteController;
+use App\Core\Router;
+
 function registerWebRoutes(Router $router): void
 {
     $router->get('/', [SiteController::class, 'home']);

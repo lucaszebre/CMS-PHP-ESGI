@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+namespace App\Services;
+
+use App\Models\User;
+
 class AuthService
 {
     private User $user;
@@ -15,7 +19,7 @@ class AuthService
     {
         $fetchedUser = $this->user->getUserByEmail($email);
 
-        if ($fetchedUser === null || !password_verify($password, $fetchedUser['password'])) {
+        if (!$fetchedUser || !password_verify($password, $fetchedUser['password'])) {
             return [
                 'success' => false,
                 'error' => 'Wrong credentials.',
@@ -41,7 +45,7 @@ class AuthService
 
         $fetchedUser = $this->user->getUserByEmail($email);
 
-        if ($fetchedUser !== null) {
+        if ($fetchedUser) {
             return [
                 'success' => false,
                 'error' => 'user already present',

@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+namespace App\Models;
+
+use PDO;
+use App\Config\Database;
+
 class User
 {
 
