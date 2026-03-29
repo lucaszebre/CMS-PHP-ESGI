@@ -9,6 +9,10 @@
     <h1>Edit page</h1>
     <a href="/admin/pages">← Back</a>
 
+    <?php if (!empty($error)): ?>
+        <p style="color:red"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
+    <?php endif; ?>
+
     <form method="POST" action="/admin/pages/edit/<?= $page['id'] ?>">
         <div>
             <label>Title<br>

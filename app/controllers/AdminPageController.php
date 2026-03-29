@@ -45,13 +45,19 @@ class AdminPageController extends Controller
 
     public function create(Request $request)
     {
+        $slug = trim($request->input('slug'));
+
+        if ($this->page->slugExists($slug)) {
+            $this->redirect('/admin/pages/create?error=slug-taken');
+        }
+
         $this->page->addPage(
             trim($request->input('title')),
             trim($request->input('content')),
             $request->input('status'),
             $this->authSession->username() ?? '',
             date('Y-m-d H:i:s'),
-            trim($request->input('slug')),
+            $slug,
         );
 
         $this->redirect('/admin/pages');
@@ -65,12 +71,20 @@ class AdminPageController extends Controller
             $this->redirect('/admin/pages');
         }
 
-        $this->render('admin/pages/edit', ['page' => $page]);
+        $this->render('admin/pages/edit', [
+            'page' => $page,
+            'error' => trim($request->query('error')),
+        ]);
     }
 
     public function update(Request $request)
     {
         $id = (int) $request->param('id');
+        $slug = trim($request->input('slug'));
+
+        if ($this->page->slugExists($slug, $id)) {
+            $this->redirect('/admin/pages/edit/' . $id . '?error=slug-taken');
+        }
 
         $this->page->updatePage(
             $id,
@@ -79,7 +93,7 @@ class AdminPageController extends Controller
             $request->input('status'),
             $this->authSession->username() ?? '',
             date('Y-m-d H:i:s'),
-            trim($request->input('slug')),
+            $slug,
         );
 
         $this->redirect('/admin/pages');
@@ -90,7 +104,7 @@ class AdminPageController extends Controller
         $page = $this->page->getPageById((int) $request->param('id'));
 
         if ($page) {
-            $this->page->removePage($page['slug']);
+            $this->page->removePage($page['id']);
         }
 
         $this->redirect('/admin/pages');

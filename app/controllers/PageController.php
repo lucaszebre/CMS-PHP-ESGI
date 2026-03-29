@@ -25,7 +25,7 @@ class PageController extends Controller
 
     public function show(Request $request)
     {
-        $slug = $request->param('slug');
+        $slug = rawurldecode($request->param('slug'));
         $page = $this->page->getPage($slug);
 
         if (!$page || $page['status'] !== 'published') {

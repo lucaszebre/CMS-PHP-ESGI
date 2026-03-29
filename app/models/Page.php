@@ -79,10 +79,23 @@ class Page
         return $page ?: null;
     }
 
-    public function removePage($slug)
+    public function removePage(int $id)
     {
-        $stmt = $this->db->prepare('DELETE FROM page WHERE slug = :slug');
+        $stmt = $this->db->prepare('DELETE FROM page WHERE id = :id');
 
-        return $stmt->execute(['slug' => $slug]);
+        return $stmt->execute(['id' => $id]);
+    }
+
+    public function slugExists(string $slug, ?int $currentPageId = null): bool
+    {
+        if ($currentPageId !== null) {
+            $stmt = $this->db->prepare('SELECT 1 FROM page WHERE slug = :slug AND id != :id');
+            $stmt->execute(['slug' => $slug, 'id' => $currentPageId]);
+        } else {
+            $stmt = $this->db->prepare('SELECT 1 FROM page WHERE slug = :slug');
+            $stmt->execute(['slug' => $slug]);
+        }
+
+        return (bool) $stmt->fetch();
     }
 }
