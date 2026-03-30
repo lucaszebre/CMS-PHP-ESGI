@@ -17,6 +17,18 @@ class AuthSession
         ];
     }
 
+    public function isLoggedIn(): bool
+    {
+        return isset($_SESSION['user']);
+    }
+
+    public function role(): ?string
+    {
+        $role = $_SESSION['user']['role'] ?? null;
+
+        return is_string($role) ? $role : null;
+    }
+
     public function username(): ?string
     {
         $username = $_SESSION['user']['username'] ?? null;

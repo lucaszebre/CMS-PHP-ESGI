@@ -45,6 +45,30 @@ class Page
         ]);
     }
 
+    public function getAllPages(): array
+    {
+        $stmt = $this->db->prepare('SELECT id, title, content, status, author, date, slug FROM page ORDER BY date DESC');
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getPublishedPages(): array
+    {
+        $stmt = $this->db->prepare("SELECT id, title, content, status, author, date, slug FROM page WHERE status = 'published' ORDER BY date DESC");
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getPageById(int $id): ?array
+    {
+        $stmt = $this->db->prepare('SELECT id, title, content, status, author, date, slug FROM page WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
     public function getPage($slug)
     {
         $stmt = $this->db->prepare('SELECT id, title, content, status, author, date, slug FROM page WHERE slug = :slug');
@@ -52,13 +76,26 @@ class Page
 
         $page = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $page ?? null;
+        return $page ?: null;
     }
 
-    public function removePage($slug)
+    public function removePage(int $id)
     {
-        $stmt = $this->db->prepare('DELETE FROM page WHERE slug = :slug');
+        $stmt = $this->db->prepare('DELETE FROM page WHERE id = :id');
 
-        return $stmt->execute(['slug' => $slug]);
+        return $stmt->execute(['id' => $id]);
+    }
+
+    public function slugExists(string $slug, ?int $currentPageId = null): bool
+    {
+        if ($currentPageId !== null) {
+            $stmt = $this->db->prepare('SELECT 1 FROM page WHERE slug = :slug AND id != :id');
+            $stmt->execute(['slug' => $slug, 'id' => $currentPageId]);
+        } else {
+            $stmt = $this->db->prepare('SELECT 1 FROM page WHERE slug = :slug');
+            $stmt->execute(['slug' => $slug]);
+        }
+
+        return (bool) $stmt->fetch();
     }
 }

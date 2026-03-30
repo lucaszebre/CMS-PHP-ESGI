@@ -60,7 +60,7 @@ class User
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
-        return $user ?? null;
+        return $user;
     }
 
     public function removeUser($id)

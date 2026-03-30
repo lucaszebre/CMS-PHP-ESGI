@@ -20,6 +20,7 @@ class SiteController extends Controller
     {
         $this->render('home', [
             'username' => $this->authSession->username(),
+            'role'     => $this->authSession->role(),
         ]);
     }
 }
