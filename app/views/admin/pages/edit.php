@@ -14,6 +14,7 @@
     <?php endif; ?>
 
     <form method="POST" action="/admin/pages/edit/<?= $page['id'] ?>">
+        <?= \App\Services\CsrfService::field() ?>
         <div>
             <label>Title<br>
                 <input type="text" name="title" value="<?= htmlspecialchars($page['title'], ENT_QUOTES, 'UTF-8') ?>" required>
@@ -26,14 +27,15 @@
         </div>
         <div>
             <label>Content<br>
-                <textarea name="content" rows="10" cols="50"><?= htmlspecialchars($page['content'], ENT_QUOTES, 'UTF-8') ?></textarea>
+                <textarea name="content" rows="10" cols="50" maxlength="<?= \App\Models\Page::MAX_CONTENT_LENGTH ?>"><?= htmlspecialchars($page['content'], ENT_QUOTES, 'UTF-8') ?></textarea>
             </label>
         </div>
         <div>
             <label>Status<br>
                 <select name="status">
-                    <option value="draft" <?= $page['status'] === 'draft' ? 'selected' : '' ?>>Draft</option>
-                    <option value="published" <?= $page['status'] === 'published' ? 'selected' : '' ?>>Published</option>
+                    <?php foreach ($statuses as $value => $label): ?>
+                        <option value="<?= htmlspecialchars($value, ENT_QUOTES, 'UTF-8') ?>" <?= $page['status'] === $value ? 'selected' : '' ?>><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></option>
+                    <?php endforeach; ?>
                 </select>
             </label>
         </div>

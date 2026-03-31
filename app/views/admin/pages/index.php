@@ -10,6 +10,10 @@
     <a href="/">Home</a> |
     <a href="/admin/pages/create">New page</a>
 
+    <?php if (!empty($error)): ?>
+        <p style="color:red"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
+    <?php endif; ?>
+
     <?php if (empty($pages)): ?>
         <p>No pages yet.</p>
     <?php else: ?>
@@ -34,9 +38,12 @@
                         <td><?= htmlspecialchars($page['date'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td>
                             <a href="/admin/pages/edit/<?= $page['id'] ?>">Edit</a>
-                            <form method="POST" action="/admin/pages/delete/<?= $page['id'] ?>" style="display:inline">
-                                <button type="submit" onclick="return confirm('Delete this page?')">Delete</button>
-                            </form>
+                            <?php if ($isAdmin): ?>
+                                <form method="POST" action="/admin/pages/delete/<?= $page['id'] ?>" style="display:inline">
+                                <?= \App\Services\CsrfService::field() ?>
+                                    <button type="submit" onclick="return confirm('Delete this page?')">Delete</button>
+                                </form>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>

@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `page` (
   `id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
-  `content` varchar(500) DEFAULT NULL,
+  `content` text DEFAULT NULL,
   `status` enum('published','draft','unpublished','') NOT NULL DEFAULT 'draft',
   `author` varchar(100) NOT NULL,
   `date` timestamp NOT NULL DEFAULT current_timestamp(),

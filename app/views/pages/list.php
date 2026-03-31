@@ -15,7 +15,7 @@
         <ul>
             <?php foreach ($pages as $page): ?>
                 <li>
-                    <a href="/page/<?= htmlspecialchars($page['slug'], ENT_QUOTES, 'UTF-8') ?>">
+                    <a href="/page/<?= rawurlencode($page['slug']) ?>">
                         <?= htmlspecialchars($page['title'], ENT_QUOTES, 'UTF-8') ?>
                     </a>
                     <small>— <?= htmlspecialchars($page['author'], ENT_QUOTES, 'UTF-8') ?> — <?= htmlspecialchars($page['date'], ENT_QUOTES, 'UTF-8') ?></small>

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Services\CsrfService;
+
 class Router
 {
     private array $routes = [];
@@ -57,6 +59,15 @@ class Router
     {
         $requestPath = $this->normalizePath($request->path());
         $method = $request->method();
+
+        if ($method === 'POST') {
+            $csrfToken = $request->input('_csrf');
+            if (!CsrfService::validate($csrfToken)) {
+                http_response_code(403);
+                echo 'Invalid CSRF token';
+                return;
+            }
+        }
 
         foreach ($this->routes as $route) {
             if ($route['method'] !== $method) {

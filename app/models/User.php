@@ -9,6 +9,11 @@ use App\Config\Database;
 
 class User
 {
+    public const ROLES = [
+        'admin' => 'Admin',
+        'editor' => 'Editor',
+        'user' => 'User',
+    ];
 
     private PDO $db;
 
@@ -17,14 +22,46 @@ class User
         $this->db = Database::getInstance()->getConnection();
     }
 
-    public function addUser($email, $username, $password)
+    public function addUser($email, $username, $password, $role = 'user')
     {
-        $stmt = $this->db->prepare('INSERT INTO user (email, username, password) VALUES (:email, :username, :password)');
+        $stmt = $this->db->prepare('INSERT INTO user (email, username, password, role) VALUES (:email, :username, :password, :role)');
         return $stmt->execute([
             'email' => $email,
             'username' => $username,
             'password' => $password,
+            'role' => $role,
         ]);
+    }
+
+    public function getAllUsers()
+    {
+        $stmt = $this->db->prepare('SELECT id, username, email, role FROM user ORDER BY id');
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function updateUserById($id, $username, $email, $role)
+    {
+        $stmt = $this->db->prepare('UPDATE user SET username = :username, email = :email, role = :role WHERE id = :id');
+        return $stmt->execute([
+            'id' => $id,
+            'username' => $username,
+            'email' => $email,
+            'role' => $role,
+        ]);
+    }
+
+    public function emailExists($email, $excludeId = null)
+    {
+        if ($excludeId !== null) {
+            $stmt = $this->db->prepare('SELECT id FROM user WHERE email = :email AND id != :id');
+            $stmt->execute(['email' => $email, 'id' => $excludeId]);
+        } else {
+            $stmt = $this->db->prepare('SELECT id FROM user WHERE email = :email');
+            $stmt->execute(['email' => $email]);
+        }
+
+        return $stmt->fetch(PDO::FETCH_ASSOC) !== false;
     }
 
     public function updateUser($email, $username, $role)
@@ -41,7 +78,7 @@ class User
     public function getUser($id)
     {
 
-        $stmt = $this->db->prepare("SELECT username,email,role FROM user WHERE id=:id");
+        $stmt = $this->db->prepare("SELECT id, username, email, role FROM user WHERE id=:id");
         $stmt->execute(['id' => $id]);
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -54,7 +91,7 @@ class User
     {
 
 
-        $stmt = $this->db->prepare('SELECT username, email, password, role FROM user WHERE email = :email');
+        $stmt = $this->db->prepare('SELECT id, username, email, password, role FROM user WHERE email = :email');
         $stmt->execute(['email' => $email]);
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);

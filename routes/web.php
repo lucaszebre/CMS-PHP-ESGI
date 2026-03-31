@@ -4,6 +4,7 @@ use App\Controllers\AuthController;
 use App\Controllers\SiteController;
 use App\Controllers\PageController;
 use App\Controllers\AdminPageController;
+use App\Controllers\AdminUserController;
 use App\Core\Router;
 
 function registerWebRoutes(Router $router): void
@@ -29,4 +30,11 @@ function registerWebRoutes(Router $router): void
     $router->get('/admin/pages/edit/{id}', [AdminPageController::class, 'showEdit']);
     $router->post('/admin/pages/edit/{id}', [AdminPageController::class, 'update']);
     $router->post('/admin/pages/delete/{id}', [AdminPageController::class, 'delete']);
+
+    $router->get('/admin/users', [AdminUserController::class, 'index']);
+    $router->get('/admin/users/create', [AdminUserController::class, 'showCreate']);
+    $router->post('/admin/users/create', [AdminUserController::class, 'create']);
+    $router->get('/admin/users/edit/{id}', [AdminUserController::class, 'showEdit']);
+    $router->post('/admin/users/edit/{id}', [AdminUserController::class, 'update']);
+    $router->post('/admin/users/delete/{id}', [AdminUserController::class, 'delete']);
 }

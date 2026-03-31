@@ -13,6 +13,9 @@
         <?php if (in_array($role ?? null, ['admin', 'editor'], true)): ?>
             | <a href="/admin/pages">Admin</a>
         <?php endif; ?>
+        <?php if ($role === 'admin'): ?>
+            | <a href="/admin/users">Users</a>
+        <?php endif; ?>
     </nav>
 
     <?php if ($username !== null): ?>
