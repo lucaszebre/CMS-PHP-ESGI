@@ -19,6 +19,13 @@ function registerWebRoutes(Router $router): void
 
     $router->get('/logout', [AuthController::class, 'logout']);
 
+    $router->get('/forgot-password', [AuthController::class, 'showForgotPassword']);
+    $router->post('/forgot-password', [AuthController::class, 'forgotPassword']);
+    $router->get('/reset-password', [AuthController::class, 'showResetPassword']);
+    $router->post('/reset-password', [AuthController::class, 'resetPassword']);
+
+    $router->get('/activate', [AuthController::class, 'activate']);
+
     // Frontoffice
     $router->get('/pages', [PageController::class, 'list']);
     $router->get('/page/{slug}', [PageController::class, 'show']);

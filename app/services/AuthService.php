@@ -26,6 +26,13 @@ class AuthService
             ];
         }
 
+        if (isset($fetchedUser['is_active']) && !$fetchedUser['is_active']) {
+            return [
+                'success' => false,
+                'error' => 'Account not activated. Please check your email.',
+            ];
+        }
+
         unset($fetchedUser['password']);
 
         return [
@@ -53,8 +60,13 @@ class AuthService
         }
 
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $this->user->addUser($email, $username, $hashedPassword);
+        $activationToken = bin2hex(random_bytes(32));
+        $userId = $this->user->addUser($email, $username, $hashedPassword, 'user', $activationToken);
 
-        return ['success' => true];
+        return [
+            'success' => true,
+            'user_id' => $userId,
+            'activation_token' => $activationToken,
+        ];
     }
 }

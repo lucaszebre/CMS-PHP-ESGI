@@ -39,7 +39,8 @@ $success = $success ?? '';
             <button type="submit">Log in</button>
         </div>
     </form>
-    <a href="/register">Go to register page</a>
+    <a href="/register">Go to register page</a> |
+    <a href="/forgot-password">Forgot password?</a>
 
 </body>
 

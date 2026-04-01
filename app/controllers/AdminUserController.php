@@ -69,6 +69,22 @@ class AdminUserController extends Controller
 
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
+
+
+        if (strlen($password) < 8) {
+            $this->redirect('/admin/users/create?error=password-too-short');
+        }
+
+        if ($this->user->emailExists($email)) {
+            $this->redirect('/admin/users/create?error=email-taken');
+        }
+
+        if (!$this->isValidRole($role)) {
+            $this->redirect('/admin/users/create?error=invalid-role');
+        }
+
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
         if (!$this->user->addUser($email, $username, $hashedPassword, $role)) {
             $this->redirect('/admin/users/create?error=save-failed');
         }
