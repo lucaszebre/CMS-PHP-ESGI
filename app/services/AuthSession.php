@@ -6,6 +6,9 @@ namespace App\Services;
 
 class AuthSession
 {
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_EDITOR = 'editor';
+
     public function login(array $user): void
     {
         session_regenerate_id(true);
@@ -15,6 +18,33 @@ class AuthSession
             'username' => $user['username'] ?? null,
             'role' => $user['role'] ?? null,
         ];
+    }
+
+    public function isLoggedIn(): bool
+    {
+        return isset($_SESSION['user']);
+    }
+
+    public function role(): ?string
+    {
+        $role = $_SESSION['user']['role'] ?? null;
+
+        return is_string($role) ? $role : null;
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role() === self::ROLE_ADMIN;
+    }
+
+    public function isEditor(): bool
+    {
+        return $this->role() === self::ROLE_EDITOR;
+    }
+
+    public function canManagePages(): bool
+    {
+        return $this->isAdmin() || $this->isEditor();
     }
 
     public function username(): ?string

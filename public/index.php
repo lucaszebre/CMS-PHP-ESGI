@@ -6,6 +6,11 @@ use App\Core\Router;
 use App\Core\Request;
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_set_cookie_params([
+        'httponly' => true,
+        'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        'samesite' => 'Strict',
+    ]);
     session_start();
 }
 

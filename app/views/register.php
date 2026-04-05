@@ -24,6 +24,7 @@ $success = $success ?? '';
     <?php endif; ?>
 
     <form method="post" action="/register" autocomplete="on">
+        <?= \App\Services\CsrfService::field() ?>
         <div>
             <label for="username">Username</label>
             <input id="username" name="username" type="text" placeholder="Your username" required>

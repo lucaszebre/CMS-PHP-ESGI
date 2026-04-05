@@ -24,6 +24,7 @@ $success = $success ?? '';
     <?php endif; ?>
 
     <form method="post" action="/login" autocomplete="on">
+        <?= \App\Services\CsrfService::field() ?>
         <div>
             <label for="email">Email</label>
             <input id="email" name="email" type="email" placeholder="you@example.com" required>
@@ -38,7 +39,8 @@ $success = $success ?? '';
             <button type="submit">Log in</button>
         </div>
     </form>
-    <a href="/register">Go to register page</a>
+    <a href="/register">Go to register page</a> |
+    <a href="/forgot-password">Forgot password?</a>
 
 </body>
 
